@@ -5,11 +5,6 @@ import polars as pl
 from config import Config
 from csv_parser import parse_data
 
-__all__ = [
-    'plot_distribution',
-    'set_Style'
-]
-
 
 def set_style():
     # Set global matplotlib styling
@@ -51,8 +46,8 @@ def plot_distributions(data=[], x=None, col=None, row=None, hue=None):
         plt.show()
 
 
-if __name__ == "main":
-    dataframe = parse_data()
+if __name__ == "__main__":
+    dataframe = parse_data(sample_size=1500, verbose=True)
 
     grouped_frame = dataframe.with_columns(
         group = pl.concat_str([pl.col("hints"),
@@ -107,6 +102,8 @@ if __name__ == "main":
         fig.set_figheight(11)
         ax[1].set_ylim(-1, 20)
         ax[1].set_ylabel("Raw Write Rate (GiB/s)")
+        ax[1].set_xlabel("XIOS Nodes")
+        ax[0].set_xlabel("Raw Write Rate (GiB/s)")
         fig.suptitle(f"{node} XIOS nodes with unstriped output")
         plt.savefig(f'paper_plots/UNSTRIPED_{node}_node_plot.png', dpi=500)
         plt.close()
@@ -148,6 +145,14 @@ if __name__ == "main":
         fig.set_figheight(11)
         ax[1].set_ylim(-1, 20)
         ax[1].set_ylabel("Raw Write Rate (GiB/s)")
+        ax[1].set_xlabel("XIOS Nodes")
+        ax[0].set_xlabel("Raw Write Rate (GiB/s)")
         fig.suptitle(f"{node} XIOS nodes with striped output")
         plt.savefig(f'paper_plots/STRIPED_{node}_node_plot.png', dpi=500)
         plt.close()
+
+
+__all__ = [
+    'plot_distribution',
+    'set_Style'
+]

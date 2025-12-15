@@ -4,7 +4,7 @@ import polars as pl
 from config import Config
 
 
-def parse_data(file=None, sample_size=None):
+def parse_data(file=None, sample_size=None, verbose=False):
 
     dataframe = pl.DataFrame()
 
@@ -21,7 +21,8 @@ def parse_data(file=None, sample_size=None):
                     csv_path = Path(f"data/{node}_node_xios/{raid}/{stripe}/{filename}.csv")
 
                     if csv_path.exists():
-                        print(f"Parsing '{csv_path}'")
+                        if verbose:
+                            print(f"Parsing '{csv_path}'")
                         csv_data = pl.read_csv(
                             csv_path,
                             infer_schema_length=100000)
@@ -63,7 +64,7 @@ def parse_data(file=None, sample_size=None):
                         else:
                             csv_data = csv_data.filter(
                                 ~((pl.col("created").is_between(Config.get().RAID_START, Config.get().RAID_END)) |
-                                (pl.col("created").ge(Config.get().RAID_START_2)))
+                                (pl.col("created").is_between(Config.get().RAID_START_2, Config.get().RAID_END_2)))
                             )
 
                         # Filter for specified file (if applicable)
@@ -88,8 +89,8 @@ def parse_data(file=None, sample_size=None):
                         ])
 
                         # Print some descriptive statistics
-                        # with pl.Config(tbl_rows=-1):
-                        #     print(stats_frame.describe(percentiles=[0.05, 0.25, 0.5, 0.75, 0.95]))
+                        with pl.Config(tbl_rows=-1):
+                            print(stats_frame.describe(percentiles=[0.05, 0.25, 0.5, 0.75, 0.95]))
 
                         stats_frame = pl.DataFrame([
                             pl.Series(csv_data.select("raw_write_rate_gibs")),

@@ -24,7 +24,7 @@ class Config():
         Config.RAID_START = datetime(year=2025, month=12, day=1, hour=1, minute=0)
         Config.RAID_END = datetime(year=2025, month=12, day=4, hour=15, minute=5)
         Config.RAID_START_2 = datetime(year=2025, month=12, day=11, hour=17, minute=0)
-
+        Config.RAID_END_2 = datetime(year=2025, month=12, day=14, hour=17, minute=0)
 
         coll_buff_raid = "#e61d1d"
         coll_buff_control = "#d86100"
