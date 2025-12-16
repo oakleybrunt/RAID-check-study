@@ -76,7 +76,7 @@ def parse_data(file=None, sample_size=None, verbose=False):
                         # Get an equal sample size
                         if sample_size:
                             data_len = sample_size
-                            csv_data = csv_data.sample(n=data_len)
+                            csv_data = csv_data.sample(n=data_len, seed=72)
                         else:
                             data_len = len(csv_data)
 
@@ -89,8 +89,9 @@ def parse_data(file=None, sample_size=None, verbose=False):
                         ])
 
                         # Print some descriptive statistics
-                        with pl.Config(tbl_rows=-1):
-                            print(stats_frame.describe(percentiles=[0.05, 0.25, 0.5, 0.75, 0.95]))
+                        if verbose:
+                            with pl.Config(tbl_rows=-1):
+                                print(stats_frame.describe(percentiles=[0.05, 0.25, 0.5, 0.75, 0.95]))
 
                         stats_frame = pl.DataFrame([
                             pl.Series(csv_data.select("raw_write_rate_gibs")),

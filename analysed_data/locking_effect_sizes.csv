@@ -1,0 +1,11 @@
+observed,p,striping,xios_nodes,sample_size,raid_level
+-0.544587918367347,0.0,unstriped,1,3500,control
+-0.5192015510204082,0.0,unstriped,1,3500,RAID
+0.5531391632653061,0.0,striped,2,3500,control
+0.4819415714285714,0.0,striped,2,3500,RAID
+0.881688,0.0,unstriped,2,3500,control
+0.7540561632653061,0.0,unstriped,2,3500,RAID
+0.9235390816326531,0.0,striped,4,3500,control
+0.8713752040816326,0.0,striped,4,3500,RAID
+0.9406212244897959,0.0,unstriped,4,3500,control
+0.9024970612244898,0.0,unstriped,4,3500,RAID
