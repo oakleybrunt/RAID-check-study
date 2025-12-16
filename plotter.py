@@ -47,7 +47,7 @@ def plot_distributions(data=[], x=None, col=None, row=None, hue=None):
 
 
 if __name__ == "__main__":
-    dataframe = parse_data(sample_size=1500, verbose=True)
+    dataframe = parse_data(sample_size=3500, verbose=True)
 
     grouped_frame = dataframe.with_columns(
         group = pl.concat_str([pl.col("hints"),
@@ -65,91 +65,97 @@ if __name__ == "__main__":
 
     set_style()
 
-    for node in [1, 2, 4]:
-        plot_data = unstriped_dataframe.filter(
-            pl.col("xios_nodes") == node
-        )
-        fig, ax = plt.subplots(nrows=1, ncols=2)
+    # for node in [1, 2, 4]:
+    #     plot_data = unstriped_dataframe.filter(
+    #         pl.col("xios_nodes") == node
+    #     )
 
-        sns.violinplot(data=plot_data,
-                x='xios_nodes',
-                y='raw_write_rate_gibs',
+    plot_data = unstriped_dataframe
+    fig, ax = plt.subplots(nrows=1, ncols=2)
+
+    sns.violinplot(data=plot_data,
+            x='xios_nodes',
+            y='raw_write_rate_gibs',
+            hue='group',
+            hue_order=['Standard Locking, control',
+                    'Standard Locking, RAID',
+                    'Lockahead, control',
+                    'Lockahead, RAID',
+                    ],
+            palette=Config.get().colours,
+            alpha=0.7,
+            ax=ax[1],
+            )
+
+    sns.ecdfplot(data=plot_data,
+                x='raw_write_rate_gibs',
                 hue='group',
-                hue_order=['no hints, control',
-                        'no hints, RAID',
-                        'collective buffering, control',
-                        'collective buffering, RAID',
-                        ],
+                hue_order=[
+                    'Standard Locking, control',
+                    'Standard Locking, RAID',
+                    'Lockahead, control',
+                    'Lockahead, RAID',
+                    ],
                 palette=Config.get().colours,
-                alpha=0.7,
-                ax=ax[1],
+                ax=ax[0]
                 )
 
-        sns.ecdfplot(data=plot_data,
-                    x='raw_write_rate_gibs',
-                    hue='group',
-                    hue_order=[
-                        'no hints, control',
-                        'no hints, RAID',
-                        'collective buffering, control',
-                        'collective buffering, RAID',
-                        ],
-                    palette=Config.get().colours,
-                    ax=ax[0]
-                    )
+    fig.set_figwidth(22)
+    fig.set_figheight(11)
+    ax[1].set_ylim(-1, 20)
+    ax[1].set_ylabel("Raw Write Rate (GiB/s)")
+    ax[1].set_xlabel("XIOS Nodes")
+    ax[0].set_xlabel("Raw Write Rate (GiB/s)")
+    # fig.suptitle(f"{node} XIOS nodes with unstriped output")
+    fig.suptitle("Unstriped output")
+    plt.savefig(f'paper_plots/UNSTRIPED_plot.png', dpi=500)
+    plt.close()
 
-        fig.set_figwidth(22)
-        fig.set_figheight(11)
-        ax[1].set_ylim(-1, 20)
-        ax[1].set_ylabel("Raw Write Rate (GiB/s)")
-        ax[1].set_xlabel("XIOS Nodes")
-        ax[0].set_xlabel("Raw Write Rate (GiB/s)")
-        fig.suptitle(f"{node} XIOS nodes with unstriped output")
-        plt.savefig(f'paper_plots/UNSTRIPED_{node}_node_plot.png', dpi=500)
-        plt.close()
+    # for node in [2, 4]:
+    #     plot_data = striped_dataframe.filter(
+    #         pl.col("xios_nodes") == node
+    #     )
 
-    for node in [2, 4]:
-        plot_data = striped_dataframe.filter(
-            pl.col("xios_nodes") == node
-        )
-        fig, ax = plt.subplots(nrows=1, ncols=2)
+    plot_data = striped_dataframe
+    fig, ax = plt.subplots(nrows=1, ncols=2)
 
-        sns.violinplot(data=plot_data,
-                x='xios_nodes',
-                y='raw_write_rate_gibs',
+    sns.violinplot(data=plot_data,
+            x='xios_nodes',
+            y='raw_write_rate_gibs',
+            hue='group',
+            hue_order=['Standard Locking, control',
+                    'Standard Locking, RAID',
+                    'Lockahead, control',
+                    'Lockahead, RAID',
+                    ],
+            palette=Config.get().colours,
+            alpha=0.7,
+            ax=ax[1],
+            )
+
+    sns.ecdfplot(data=plot_data,
+                x='raw_write_rate_gibs',
                 hue='group',
-                hue_order=['no hints, control',
-                        'no hints, RAID',
-                        'collective buffering, control',
-                        'collective buffering, RAID',
-                        ],
+                hue_order=[
+                    'Standard Locking, control',
+                    'Standard Locking, RAID',
+                    'Lockahead, control',
+                    'Lockahead, RAID',
+                    ],
                 palette=Config.get().colours,
-                alpha=0.7,
-                ax=ax[1],
+                ax=ax[0]
                 )
 
-        sns.ecdfplot(data=plot_data,
-                    x='raw_write_rate_gibs',
-                    hue='group',
-                    hue_order=[
-                        'no hints, control',
-                        'no hints, RAID',
-                        'collective buffering, control',
-                        'collective buffering, RAID',
-                        ],
-                    palette=Config.get().colours,
-                    ax=ax[0]
-                    )
-
-        fig.set_figwidth(22)
-        fig.set_figheight(11)
-        ax[1].set_ylim(-1, 20)
-        ax[1].set_ylabel("Raw Write Rate (GiB/s)")
-        ax[1].set_xlabel("XIOS Nodes")
-        ax[0].set_xlabel("Raw Write Rate (GiB/s)")
-        fig.suptitle(f"{node} XIOS nodes with striped output")
-        plt.savefig(f'paper_plots/STRIPED_{node}_node_plot.png', dpi=500)
-        plt.close()
+    fig.set_figwidth(22)
+    fig.set_figheight(11)
+    ax[1].set_ylim(-1, 20)
+    ax[1].set_ylabel("Raw Write Rate (GiB/s)")
+    ax[1].set_xlabel("XIOS Nodes")
+    ax[0].set_xlabel("Raw Write Rate (GiB/s)")
+    # fig.suptitle(f"{node} XIOS nodes with striped output")
+    fig.suptitle("Striped output")
+    plt.savefig(f'paper_plots/STRIPED_plot.png', dpi=500)
+    plt.close()
 
 
 __all__ = [

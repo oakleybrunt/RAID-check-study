@@ -1,42 +1,11 @@
 import polars as pl
 import numpy as np
 from scipy.stats import mannwhitneyu
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 from config import Config
 from csv_parser import parse_data
-
-def mann_whit(dataframe):
-    for node in Config.get().nodes:
-        for striping in Config.get().striping:
-            for raid in Config.get().raid_check:
-
-                cb = dataframe.filter(
-                    ((pl.col("hints").str.contains("collective buffering")) &
-                    (pl.col("xios_nodes") == int(node)) &
-                    (pl.col("striping").str.contains(striping)) &
-                    (pl.col("raid_level").str.contains(raid)))
-                ).to_pandas()
-
-                no_cb = dataframe.filter(
-                    ((pl.col("hints").str.contains("no hints")) &
-                    (pl.col("xios_nodes") == int(node)) &
-                    (pl.col("striping").str.contains(striping)) &
-                    (pl.col("raid_level").str.contains(raid)))
-                ).to_pandas()
-
-                if len(cb) < 1 or len(no_cb) < 1:
-                    continue
-                else:
-                    u, p = mannwhitneyu(no_cb['raw_write_rate_gibs'],
-                                        cb['raw_write_rate_gibs'],
-                                        alternative="two-sided")
-
-                    if p < 0.05:
-                        print(f"Reject null hypothesis, there is a significant "
-                            f"difference in Raw Write Rate between collective "
-                            f"buffering and no hints for "
-                            f"{node} nodes, {striping}, {raid}")
-                        print(p)
 
 
 def cliffs_delta(x:np.ndarray, y:np.ndarray):
@@ -88,7 +57,7 @@ def permutation_did(no_cb_0, cb_0, no_cb_1, cb_1,
     # 3. Permutation loop
     for _ in range(n_perm):
         # Randomly reassign the raid labels within each condition, simulating
-        # the null hypothesis that collective buffering has no effect
+        # the null hypothesis that Lockahead has no effect
         shuffled_0 = combined_0.with_columns(
             pl.col("hints").shuffle(seed)
         )
@@ -98,19 +67,19 @@ def permutation_did(no_cb_0, cb_0, no_cb_1, cb_1,
 
         # Seperate into psuedo groups for each condition
         x0 = shuffled_0.filter(
-            pl.col("hints").str.contains("no hints")
+            pl.col("hints").str.contains("Standard Locking")
         )[col].to_numpy()
         y0 = shuffled_0.filter(
-            pl.col("hints").str.contains("collective buffering")
+            pl.col("hints").str.contains("Lockahead")
         )[col].to_numpy()
         x1 = shuffled_1.filter(
-            pl.col("hints").str.contains("no hints")
+            pl.col("hints").str.contains("Standard Locking")
         )[col].to_numpy()
         y1 = shuffled_1.filter(
-            pl.col("hints").str.contains("collective buffering")
+            pl.col("hints").str.contains("Lockahead")
         )[col].to_numpy()
 
-        # Compute effect of collective buffering under each condition
+        # Compute effect of Lockahead under each condition
         perm_d0 = cliffs_delta(x0, y0)
         perm_d1 = cliffs_delta(x1, y1)
 
@@ -125,49 +94,101 @@ def permutation_did(no_cb_0, cb_0, no_cb_1, cb_1,
     # Two -sided p
     p_value = np.mean(np.abs(perm_stats) >= abs(observed))
 
-    return observed, p_value
+
+    # 4.1 Compute the Confidence interval for plotting
+    centered_perm = perm_stats - np.mean(perm_stats) + observed
+    ci_low, ci_high = np.percentile(centered_perm, [2.5, 97.5])
+
+
+    return observed, (ci_low, ci_high), p_value
 
 
 if __name__ == '__main__':
-    dataframe = parse_data(sample_size=1500, verbose=True)
+    dataframe = parse_data(sample_size=3500, verbose=False)
+    results_frame = pl.DataFrame()
 
     for node in Config.get().nodes:
         for striping in Config.get().striping:
-            print(f"XIOS NODES : {node}\n"
-                  f"STRIPING : {striping}")
 
             raid_no_cb = dataframe.filter(
                 ((pl.col("raid_level").str.contains("RAID")) &
-                (pl.col("hints").str.contains("no hints")) &
+                (pl.col("hints").str.contains("Standard Locking")) &
                 (pl.col("xios_nodes") == int(node)) &
                 (pl.col("striping").str.contains(striping)))
             )
             raid_cb = dataframe.filter(
                 ((pl.col("raid_level").str.contains("RAID")) &
-                (pl.col("hints").str.contains("collective buffering")) &
+                (pl.col("hints").str.contains("Lockahead")) &
                 (pl.col("xios_nodes") == int(node)) &
                 (pl.col("striping").str.contains(striping)))
             )
             control_no_cb = dataframe.filter(
                 ((pl.col("raid_level").str.contains("control")) &
-                (pl.col("hints").str.contains("no hints")) &
+                (pl.col("hints").str.contains("Standard Locking")) &
                 (pl.col("xios_nodes") == int(node)) &
                 (pl.col("striping").str.contains(striping)))
             )
             control_cb = dataframe.filter(
                 ((pl.col("raid_level").str.contains("control")) &
-                (pl.col("hints").str.contains("collective buffering")) &
+                (pl.col("hints").str.contains("Lockahead")) &
                 (pl.col("xios_nodes") == int(node)) &
                 (pl.col("striping").str.contains(striping)))
             )
 
             # Call diff in diffs func
             if int(node) == 1 and striping == 'striped':
-                print("NO DATA\n")
                 continue
             else:
-                observed, p = permutation_did(control_no_cb, control_cb,
+                observed, confs, p = permutation_did(control_no_cb, control_cb,
                                               raid_no_cb, raid_cb,
                                               n_perm=100)
-                print(f"OBSERVED : {observed}")
-                print(f"P-VALUE : {p}\n")
+                print(confs)
+                result = pl.DataFrame([
+                    pl.Series("observed", [observed], pl.Float64),
+                    pl.Series("p", [p], pl.Float64),
+                    pl.Series("ci_low", [confs[0]], pl.Float64),
+                    pl.Series("ci_high", [confs[1]], pl.Float64),
+                    pl.Series("striping", [striping], pl.String),
+                    pl.Series("xios_nodes", [int(node)], pl.Int32),
+                ])
+
+                results_frame = results_frame.vstack(result)
+
+    with pl.Config(tbl_rows=-1):
+        print(results_frame)
+
+    results_frame = results_frame.with_columns(
+        ci_low_coord = pl.col("observed").sub(pl.col("ci_low")),
+        ci_high_coord = pl.col("ci_high").sub(pl.col("observed"))
+    )
+
+    # Now do some plotting
+    sns.pointplot(data=results_frame,
+                x="xios_nodes",
+                y="observed",
+                hue="striping",
+                markers='o',
+                linestyles=''
+                )
+
+    # get yerrs
+    yerr = np.vstack([
+        pl.Series(results_frame.select(pl.col("ci_low_coord"))).to_list(),
+        pl.Series(results_frame.select(pl.col("ci_high_coord"))).to_list()
+    ])
+
+    plt.errorbar(
+        x=pl.Series(results_frame.select(pl.col("xios_nodes"))).to_list(),
+        y=pl.Series(results_frame.select(pl.col("observed"))).to_list(),
+        yerr=yerr,
+        fmt="none",
+        capsize=4,
+        linewidth=1.5
+    )
+
+
+    plt.ylim(-1, 1)
+    plt.ylabel("Observed Effect Size")
+    plt.xlabel("XIOS Nodes")
+    plt.title("Cliff's Delta Observed Effect Size")
+    plt.show()

@@ -14,9 +14,9 @@ def parse_data(file=None, sample_size=None, verbose=False):
                 for filename in Config.get().filenames:
 
                     if filename == 'coll_buff':
-                        hints = 'collective buffering'
+                        hints = 'Lockahead'
                     else:
-                        hints = 'no hints'
+                        hints = 'Standard Locking'
 
                     csv_path = Path(f"data/{node}_node_xios/{raid}/{stripe}/{filename}.csv")
 
