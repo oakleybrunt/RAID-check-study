@@ -47,7 +47,7 @@ def plot_distributions(data=[], x=None, col=None, row=None, hue=None):
 
 
 if __name__ == "__main__":
-    dataframe = parse_data(sample_size=3500, verbose=True)
+    dataframe = parse_data(sample_size=3500, verbose=False)
 
     grouped_frame = dataframe.with_columns(
         group = pl.concat_str([pl.col("hints"),
@@ -73,7 +73,7 @@ if __name__ == "__main__":
     plot_data = unstriped_dataframe
     fig, ax = plt.subplots(nrows=1, ncols=2)
 
-    sns.violinplot(data=plot_data,
+    vi = sns.violinplot(data=plot_data,
             x='xios_nodes',
             y='raw_write_rate_gibs',
             hue='group',
@@ -87,7 +87,7 @@ if __name__ == "__main__":
             ax=ax[1],
             )
 
-    sns.ecdfplot(data=plot_data,
+    ec = sns.ecdfplot(data=plot_data,
                 x='raw_write_rate_gibs',
                 hue='group',
                 hue_order=[
@@ -100,8 +100,8 @@ if __name__ == "__main__":
                 ax=ax[0]
                 )
 
-    fig.set_figwidth(22)
-    fig.set_figheight(11)
+    fig.set_figwidth(14)
+    fig.set_figheight(6)
     ax[1].set_ylim(-1, 20)
     ax[1].set_ylabel("Raw Write Rate (GiB/s)")
     ax[1].set_xlabel("XIOS Nodes")
@@ -146,8 +146,8 @@ if __name__ == "__main__":
                 ax=ax[0]
                 )
 
-    fig.set_figwidth(22)
-    fig.set_figheight(11)
+    fig.set_figwidth(15.5)
+    fig.set_figheight(6)
     ax[1].set_ylim(-1, 20)
     ax[1].set_ylabel("Raw Write Rate (GiB/s)")
     ax[1].set_xlabel("XIOS Nodes")

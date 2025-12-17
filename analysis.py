@@ -1,12 +1,8 @@
 import polars as pl
 import numpy as np
-from scipy.stats import mannwhitneyu
-import seaborn as sns
-import matplotlib.pyplot as plt
 
 from config import Config
 from csv_parser import parse_data
-from plotter import set_style
 
 
 def cliffs_delta(x:np.ndarray, y:np.ndarray):
