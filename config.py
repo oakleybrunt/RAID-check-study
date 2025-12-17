@@ -37,3 +37,7 @@ class Config():
                                             hints_raid,
                                             no_hints_control,
                                         ])
+
+        Config.two_colours = sns.color_palette([coll_buff_raid,
+                                                hints_raid
+                                                ])

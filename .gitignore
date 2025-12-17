@@ -1,3 +1,4 @@
 plots/
 read_plots/
 comparison_plots/
+__pycache__/

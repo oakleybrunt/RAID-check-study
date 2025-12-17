@@ -6,9 +6,9 @@ from config import Config
 from plotter import set_style
 
 
-did_results_frame = pl.read_csv("did_results_frame.csv")
-single_perm_results = pl.read_csv("single_perm_results.csv")
-lock_mode_effect = pl.read_csv("locking_effect_sizes.csv")
+did_results_frame = pl.read_csv("analysed_data/did_effect_sizes.csv")
+single_perm_results = pl.read_csv("analysed_data/raid_effect_sizes.csv")
+lock_mode_effect = pl.read_csv("analysed_data/locking_effect_sizes.csv")
 
 
 
@@ -20,7 +20,7 @@ sns.barplot(data=did_results_frame,
             x="xios_nodes",
             y="observed",
             hue="striping",
-            palette=Config.get().colours,
+            palette=Config.get().two_colours,
             alpha=0.7
             )
 
@@ -28,7 +28,7 @@ plt.axhline(0, color='black', linewidth=0.4)
 plt.ylim(-1, 1)
 plt.ylabel("Observed Effect Size")
 plt.xlabel("XIOS Nodes")
-plt.title("Difference-in-differences Effect of Lock mode on Raw Write Rate")
+plt.title("Effect Size of Lockahead on Raw Write Rate during RAID")
 plt.savefig("paper_plots/DiD_effect_plot.png", dpi=500)
 plt.close()
 
