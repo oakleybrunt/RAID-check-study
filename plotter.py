@@ -13,7 +13,7 @@ def set_style():
             'axes.linewidth': 0.5,
             'xtick.bottom': True,
             'axes.spines.bottom': True,
-            'axes.titlesize': 'xx-large',
+            'axes.titlesize': 'large',
             'axes.labelsize': 16,
             'ytick.left': True,
             'xtick.color': 'black',
@@ -27,7 +27,7 @@ def set_style():
             'legend.fontsize': 'large',
             'legend.title_fontsize': 'large',
             'figure.titlesize': 30,
-            'figure.figsize': [20, 25]
+            # 'figure.figsize': [20, 25]
             }
     sns.set_theme(rc=style)
 

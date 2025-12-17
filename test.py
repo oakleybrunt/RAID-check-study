@@ -15,7 +15,7 @@ lock_mode_effect = pl.read_csv("analysed_data/locking_effect_sizes.csv")
 # Now do some plotting
 set_style()
 
-plt.figure(figsize=(12,6))
+plt.figure(figsize=(8,5))
 sns.barplot(data=did_results_frame,
             x="xios_nodes",
             y="observed",
@@ -39,7 +39,7 @@ sing_df = single_perm_results.with_columns(
                         separator=', ')
                         )
 
-plt.figure(figsize=(12,6))
+plt.figure(figsize=(8, 5))
 sns.barplot(data=sing_df,
             x="xios_nodes",
             y="observed",
@@ -63,7 +63,7 @@ lock_df = lock_mode_effect.with_columns(
                         separator=', ')
                         )
 
-plt.figure(figsize=(12,6))
+plt.figure(figsize=(8, 5))
 sns.barplot(data=lock_df,
             x="xios_nodes",
             y="observed",
