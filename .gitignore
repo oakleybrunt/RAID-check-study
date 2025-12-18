@@ -1,4 +1,6 @@
 plots/
+data/read_data/
+data/extra_data/
 read_plots/
 comparison_plots/
 
