@@ -100,7 +100,7 @@ if __name__ == "__main__":
                 ax=ax[0]
                 )
 
-    fig.set_figwidth(14)
+    fig.set_figwidth(15.5)
     fig.set_figheight(6)
     ax[1].set_ylim(-1, 20)
     ax[1].set_ylabel("Raw Write Rate (GiB/s)")
