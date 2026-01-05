@@ -16,7 +16,7 @@ def cliffs_delta(x:np.ndarray, y:np.ndarray):
 
 def permutation_single(x, y, n_perm=100, seed=0):
 
-    col = "raw_write_rate_gibs"
+    col = "net_write_rate_gibs"
 
     # ==========================================================================
     # 0. Get numpy array of each condition
@@ -75,7 +75,7 @@ def permutation_single(x, y, n_perm=100, seed=0):
 def permutation_did(no_cb_0, cb_0, no_cb_1, cb_1,
                     n_perm=100, seed=0):
 
-    col = "raw_write_rate_gibs"
+    col = "net_write_rate_gibs"
 
     # ==========================================================================
     # 0. Get numpy array of each condition
@@ -240,5 +240,5 @@ if __name__ == '__main__':
         print(single_perm_results)
 
 
-    did_results_frame.write_csv("did_effect_sizes.csv")
-    single_perm_results.write_csv("raid_effect_sizes.csv")
+    did_results_frame.write_csv("analysed_data/did_effect_sizes.csv")
+    single_perm_results.write_csv("analysed_data/raid_effect_sizes.csv")

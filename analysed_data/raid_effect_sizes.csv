@@ -1,11 +1,11 @@
 observed,p,striping,xios_nodes,sample_size,lock_mode
--0.16957942857142858,0.0,unstriped,1,3500,Standard Locking
--0.24245355102040816,0.0,unstriped,1,3500,Lockahead
--0.038106551020408164,0.0,striped,2,3500,Standard Locking
--0.06659202040816327,0.0,striped,2,3500,Lockahead
--0.039605714285714286,0.003,unstriped,2,3500,Standard Locking
--0.09163771428571428,0.0,unstriped,2,3500,Lockahead
--0.08098118367346939,0.0,striped,4,3500,Standard Locking
--0.06158985714285714,0.0,striped,4,3500,Lockahead
--0.14028514285714286,0.0,unstriped,4,3500,Standard Locking
--0.015883918367346938,0.242,unstriped,4,3500,Lockahead
+-0.14383485714285715,0.0,unstriped,1,3500,Standard Locking
+-0.2505702857142857,0.0,unstriped,1,3500,Lockahead
+-0.04640687755102041,0.0,striped,2,3500,Standard Locking
+-0.08694002040816326,0.0,striped,2,3500,Lockahead
+-0.04782742857142857,0.0,unstriped,2,3500,Standard Locking
+-0.11229657142857143,0.0,unstriped,2,3500,Lockahead
+-0.07762867346938776,0.0,striped,4,3500,Standard Locking
+-0.06634073469387755,0.0,striped,4,3500,Lockahead
+-0.10028416326530612,0.0,unstriped,4,3500,Standard Locking
+-0.01133469387755102,0.406,unstriped,4,3500,Lockahead

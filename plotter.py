@@ -75,7 +75,7 @@ if __name__ == "__main__":
 
     vi = sns.violinplot(data=plot_data,
             x='xios_nodes',
-            y='raw_write_rate_gibs',
+            y='net_write_rate_gibs',
             hue='group',
             hue_order=['Standard Locking, control',
                     'Standard Locking, RAID',
@@ -88,7 +88,7 @@ if __name__ == "__main__":
             )
 
     ec = sns.ecdfplot(data=plot_data,
-                x='raw_write_rate_gibs',
+                x='net_write_rate_gibs',
                 hue='group',
                 hue_order=[
                     'Standard Locking, control',
@@ -103,9 +103,9 @@ if __name__ == "__main__":
     fig.set_figwidth(15.5)
     fig.set_figheight(6)
     ax[1].set_ylim(-1, 20)
-    ax[1].set_ylabel("Raw Write Rate (GiB/s)")
+    ax[1].set_ylabel("Net Write Rate (GiB/s)")
     ax[1].set_xlabel("XIOS Nodes")
-    ax[0].set_xlabel("Raw Write Rate (GiB/s)")
+    ax[0].set_xlabel("Net Write Rate (GiB/s)")
     ax[0].set_ylabel("Cumulative Proportion of Runs\nAchieving Write Rate")
     # fig.suptitle(f"{node} XIOS nodes with unstriped output")
     fig.suptitle("Unstriped output")
@@ -122,7 +122,7 @@ if __name__ == "__main__":
 
     sns.violinplot(data=plot_data,
             x='xios_nodes',
-            y='raw_write_rate_gibs',
+            y='net_write_rate_gibs',
             hue='group',
             hue_order=['Standard Locking, control',
                     'Standard Locking, RAID',
@@ -135,7 +135,7 @@ if __name__ == "__main__":
             )
 
     sns.ecdfplot(data=plot_data,
-                x='raw_write_rate_gibs',
+                x='net_write_rate_gibs',
                 hue='group',
                 hue_order=[
                     'Standard Locking, control',
@@ -150,9 +150,9 @@ if __name__ == "__main__":
     fig.set_figwidth(15.5)
     fig.set_figheight(6)
     ax[1].set_ylim(-1, 20)
-    ax[1].set_ylabel("Raw Write Rate (GiB/s)")
+    ax[1].set_ylabel("Net Write Rate (GiB/s)")
     ax[1].set_xlabel("XIOS Nodes")
-    ax[0].set_xlabel("Raw Write Rate (GiB/s)")
+    ax[0].set_xlabel("Net Write Rate (GiB/s)")
     ax[0].set_ylabel("Cumulative Proportion of Runs\nAchieving Write Rate")
     # fig.suptitle(f"{node} XIOS nodes with striped output")
     fig.suptitle("Striped output")

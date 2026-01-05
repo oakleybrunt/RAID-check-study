@@ -7,7 +7,7 @@ from analysis import cliffs_delta
 
 def permutation_single(x, y, n_perm=100, seed=0):
 
-    col = "raw_write_rate_gibs"
+    col = "net_write_rate_gibs"
 
     # ==========================================================================
     # 0. Get numpy array of each condition
@@ -130,4 +130,4 @@ if __name__ == '__main__':
         print(single_perm_results)
 
 
-    single_perm_results.write_csv("locking_effect_sizes.csv")
+    single_perm_results.write_csv("analysed_data/locking_effect_sizes.csv")

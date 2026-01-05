@@ -35,6 +35,9 @@ def parse_data(file=None, sample_size=None, verbose=False):
                             pl.col("raw_write_rate_mibs").cast(
                                 pl.Float64, strict=False).alias(
                                     "raw_write_rate_mibs"),
+                            pl.col("net_write_rate_mibs").cast(
+                                pl.Float64, strict=False).alias(
+                                    "net_write_rate_mibs"),
                             pl.col("created").str.to_datetime(
                                 format="%Y-%m-%d %H:%M:%S%.f"),
                         )
@@ -44,7 +47,9 @@ def parse_data(file=None, sample_size=None, verbose=False):
                         # Convert write rate to GiBs by dividing by 1024
                         csv_data = csv_data.with_columns(
                             raw_write_rate_gibs = pl.col(
-                                "raw_write_rate_mibs").truediv(1024)
+                                "raw_write_rate_mibs").truediv(1024),
+                            net_write_rate_gibs = pl.col(
+                                "net_write_rate_mibs").truediv(1024)
                         )
 
                         # check for normal distribution in each file
@@ -86,6 +91,7 @@ def parse_data(file=None, sample_size=None, verbose=False):
 
                         stats_frame = pl.DataFrame([
                             pl.Series(csv_data.select("raw_write_rate_gibs")),
+                            pl.Series(csv_data.select("net_write_rate_gibs"))
                         ])
 
                         # Print some descriptive statistics
@@ -95,6 +101,7 @@ def parse_data(file=None, sample_size=None, verbose=False):
 
                         stats_frame = pl.DataFrame([
                             pl.Series(csv_data.select("raw_write_rate_gibs")),
+                            pl.Series(csv_data.select("net_write_rate_gibs")),
                             pl.Series(csv_data.select(pl.col("filename"))),
                             pl.Series("raid_level", [raid] * data_len, pl.String),
                             pl.Series("xios_nodes", [int(node)] * data_len, pl.Int32),
